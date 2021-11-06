@@ -8,6 +8,7 @@ from discord.ext import commands
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ""
 
+discord.opus.load_opus('opus')
 
 ytdl_format_options = {
     "format": "bestaudio/best",
@@ -50,7 +51,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
             data = data["entries"][0]
 
         filename = data["url"] if stream else ytdl.prepare_filename(data)
-        return cls(discord.FFmpegPCMAudio(filename, executable='ffmpeg.exe', **ffmpeg_options), data=data)
+        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
 
 class Music(commands.Cog):
@@ -155,4 +156,4 @@ async def on_ready():
 
 
 bot.add_cog(Music(bot))
-bot.run("")
+bot.run("MzI4OTUzNzQ3ODE4NTQ1MTU5.WVFIDQ._p3bEe9zZRoz9OLogN0m_EDWsPs")

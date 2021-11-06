@@ -1,0 +1,4 @@
+wheel
+py-cord
+PyNaCl
+youtube_dl
