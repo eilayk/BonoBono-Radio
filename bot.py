@@ -1,5 +1,4 @@
 import asyncio
-from asyncio.queues import Queue
 
 import discord
 import youtube_dl
