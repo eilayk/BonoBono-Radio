@@ -161,4 +161,4 @@ async def on_ready():
 
 
 bot.add_cog(Music(bot))
-bot.run("MzI4OTUzNzQ3ODE4NTQ1MTU5.WVFIDQ.E9wKcb5MraRgNC1bR2Igcqq2j9o")
+bot.run("")
