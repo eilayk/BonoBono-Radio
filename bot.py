@@ -8,8 +8,6 @@ from discord.ext import commands
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ""
 
-discord.opus.load_opus('opus')
-
 ytdl_format_options = {
     "format": "bestaudio/best",
     "outtmpl": "%(extractor)s-%(id)s-%(title)s.%(ext)s",
@@ -75,8 +73,6 @@ class Music(commands.Cog):
 
     @commands.command(name="sing")
     async def play(self, ctx, *, url):
-        """Streams from a url (same as yt, but doesn't predownload)"""
-
         if ctx.voice_client.is_playing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
             self.queue.append(player)
@@ -140,8 +136,6 @@ class Music(commands.Cog):
             else:
                 await ctx.send("Connect to voice channel")
                 raise commands.CommandError("Author not connected to a voice channel.")
-        # elif ctx.voice_client.is_playing():
-        #     ctx.voice_client.stop()
 
 
 bot = commands.Bot(
