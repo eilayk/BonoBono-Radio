@@ -1,15 +1,18 @@
 import asyncio
+from asyncio.queues import Queue
 
 import discord
 import youtube_dl
+
+# import opus
 
 from discord.ext import commands
 
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ""
 
+# discord.opus.load_opus('opus')
 discord.opus.load_opus('opus')
-
 ytdl_format_options = {
     "format": "bestaudio/best",
     "outtmpl": "%(extractor)s-%(id)s-%(title)s.%(ext)s",
@@ -84,21 +87,17 @@ class Music(commands.Cog):
         else:
             async with ctx.typing():
                 player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
-                print(player)
                 ctx.voice_client.play(
-                    player, after=lambda e: print(f"Player error: {e}") if e else None
-                )
-            await ctx.send(f"Now playing: {player.title}")
+                    player, after=lambda e: asyncio.run(self.play_next(ctx)))
+            await ctx.send(f"Now singing: {player.title}")
 
     async def play_next(self, ctx):
-        print(self.queue)
         if len(self.queue) >= 1:
             source = self.queue[0]
             del self.queue[0]
             if ctx.voice_client.is_playing():
                 ctx.voice_client.stop()
-            ctx.voice_client.play(source, after=lambda e: self.play_next(ctx))
-            # after=lambda e: self.play_next(ctx)
+            ctx.voice_client.play(source, after=lambda e: asyncio.run(self.play_next(ctx)))
 
     @commands.command(name="skip")
     async def skip(self, ctx):
@@ -108,14 +107,14 @@ class Music(commands.Cog):
             await ctx.send('No songs in queue!')
 
     @commands.command()
-    async def volume(self, ctx, volume: int):
+    async def volume(self, ctx, volume: int=None):
         """Changes the player's volume"""
 
         if ctx.voice_client is None:
             return await ctx.send("Connect me to voice.")
-        
-        if type(volume) is not int:
-            return await ctx.send("Gimme whole number.")
+
+        if volume == None:
+            return await ctx.send(f"current volume: {ctx.voice_client.source.volume * 100}")
         
         if volume > 100:
             return await ctx.send("Can't get louder than 100%")
@@ -124,6 +123,7 @@ class Music(commands.Cog):
             return await ctx.send("Can't get quieter than 0%")
 
         ctx.voice_client.source.volume = volume / 100
+
         await ctx.send(f"Changed volume to {volume}%")
 
     @commands.command(name="bye")
